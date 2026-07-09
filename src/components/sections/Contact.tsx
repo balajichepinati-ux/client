@@ -39,14 +39,31 @@ export default function Contact() {
 
   const onSubmit = async (data: ContactFormValues) => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log('Contact inquiry received:', data);
-    setIsSubmitting(false);
-    setIsSubmitSuccess(true);
-    reset();
-    // Reset success message after 5 seconds
-    setTimeout(() => setIsSubmitSuccess(false), 5000);
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        setIsSubmitSuccess(true);
+        reset();
+        // Reset success message after 5 seconds
+        setTimeout(() => setIsSubmitSuccess(false), 5000);
+      } else {
+        alert(result.message || 'Failed to submit inquiry. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      alert('A network error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
