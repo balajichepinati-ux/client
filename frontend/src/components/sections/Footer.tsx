@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Cpu, Send, CheckCircle2 } from 'lucide-react';
+import { API_URL } from '@/utils/api';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
@@ -11,7 +12,7 @@ export default function Footer() {
     e.preventDefault();
     if (!email) return;
     try {
-      const response = await fetch('http://localhost:5000/api/newsletter', {
+      const response = await fetch(`${API_URL}/api/newsletter`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

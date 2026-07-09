@@ -1,5 +1,7 @@
 'use client';
 
+import { API_URL } from '@/utils/api';
+
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/sections/Navbar';
 import Footer from '@/components/sections/Footer';
@@ -71,7 +73,7 @@ export default function CareersPage() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/careers');
+        const response = await fetch(`${API_URL}/api/careers`);
         const result = await response.json();
         if (response.ok && result.success && result.data.length > 0) {
           setJobs(result.data);
@@ -110,7 +112,7 @@ export default function CareersPage() {
         const base64Data = fileReader.result as string;
 
         // 2. Upload file to backend server
-        const uploadRes = await fetch('http://localhost:5000/api/upload', {
+        const uploadRes = await fetch(`${API_URL}/api/upload`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -130,7 +132,7 @@ export default function CareersPage() {
         }
 
         // 3. Submit Career Application
-        const applyRes = await fetch('http://localhost:5000/api/careers/apply', {
+        const applyRes = await fetch(`${API_URL}/api/careers/apply`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

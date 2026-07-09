@@ -1,5 +1,7 @@
 'use client';
 
+import { API_URL } from '@/utils/api';
+
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/sections/Navbar';
 import Footer from '@/components/sections/Footer';
@@ -58,7 +60,7 @@ export default function ReviewsPage() {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/reviews');
+      const response = await fetch(`${API_URL}/api/reviews`);
       const result = await response.json();
       if (response.ok && result.success && result.data.length > 0) {
         setReviews(result.data);
@@ -86,7 +88,7 @@ export default function ReviewsPage() {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch('http://localhost:5000/api/reviews', {
+      const response = await fetch(`${API_URL}/api/reviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

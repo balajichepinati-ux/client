@@ -1,5 +1,7 @@
 'use client';
 
+import { API_URL } from '@/utils/api';
+
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/sections/Navbar';
 import Footer from '@/components/sections/Footer';
@@ -78,7 +80,7 @@ export default function ServicesPage() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/services');
+        const response = await fetch(`${API_URL}/api/services`);
         const result = await response.json();
         if (response.ok && result.success && result.data.length > 0) {
           setServices(result.data);

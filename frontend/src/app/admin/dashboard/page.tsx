@@ -1,5 +1,7 @@
 'use client';
 
+import { API_URL } from '@/utils/api';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
@@ -78,7 +80,7 @@ export default function AdminDashboardPage() {
 
     try {
       // 1. Fetch Analytics
-      const resStats = await fetch('http://localhost:5000/api/admin/analytics', {
+      const resStats = await fetch(`${API_URL}/api/admin/analytics`, {
         headers: { 'x-admin-token': token },
       });
       const dataStats = await resStats.json();
@@ -87,7 +89,7 @@ export default function AdminDashboardPage() {
       }
 
       // 2. Fetch Inquiries
-      const resInq = await fetch('http://localhost:5000/api/admin/contacts', {
+      const resInq = await fetch(`${API_URL}/api/admin/contacts`, {
         headers: { 'x-admin-token': token },
       });
       const dataInq = await resInq.json();
@@ -96,21 +98,21 @@ export default function AdminDashboardPage() {
       }
 
       // 3. Fetch Products
-      const resProd = await fetch('http://localhost:5000/api/products');
+      const resProd = await fetch(`${API_URL}/api/products`);
       const dataProd = await resProd.json();
       if (resProd.ok && dataProd.success) {
         setProducts(dataProd.data);
       }
 
       // 4. Fetch Services
-      const resSvc = await fetch('http://localhost:5000/api/services');
+      const resSvc = await fetch(`${API_URL}/api/services`);
       const dataSvc = await resSvc.json();
       if (resSvc.ok && dataSvc.success) {
         setServices(dataSvc.data);
       }
 
       // 5. Fetch Applications
-      const resApp = await fetch('http://localhost:5000/api/careers/applications', {
+      const resApp = await fetch(`${API_URL}/api/careers/applications`, {
         headers: { 'x-admin-token': token },
       });
       const dataApp = await resApp.json();
@@ -119,7 +121,7 @@ export default function AdminDashboardPage() {
       }
 
       // 6. Fetch Reviews
-      const resRev = await fetch('http://localhost:5000/api/reviews?adminMode=true', {
+      const resRev = await fetch(`${API_URL}/api/reviews?adminMode=true`, {
         headers: { 'x-admin-token': token },
       });
       const dataRev = await resRev.json();
@@ -128,7 +130,7 @@ export default function AdminDashboardPage() {
       }
 
       // 7. Fetch Subscribers
-      const resSub = await fetch('http://localhost:5000/api/admin/subscribers', {
+      const resSub = await fetch(`${API_URL}/api/admin/subscribers`, {
         headers: { 'x-admin-token': token },
       });
       const dataSub = await resSub.json();
@@ -154,7 +156,7 @@ export default function AdminDashboardPage() {
     const token = localStorage.getItem('adminToken') || '';
 
     try {
-      const response = await fetch(`http://localhost:5000/api/reviews/${id}/approve`, {
+      const response = await fetch(`${API_URL}/api/reviews/${id}/approve`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -182,7 +184,7 @@ export default function AdminDashboardPage() {
     const token = localStorage.getItem('adminToken') || '';
 
     try {
-      const response = await fetch(`http://localhost:5000/api/reviews/${id}`, {
+      const response = await fetch(`${API_URL}/api/reviews/${id}`, {
         method: 'DELETE',
         headers: { 'x-admin-token': token },
       });
@@ -215,7 +217,7 @@ export default function AdminDashboardPage() {
         const uploadPromise = new Promise<string>((resolve, reject) => {
           fileReader.onload = async () => {
             try {
-              const res = await fetch('http://localhost:5000/api/upload', {
+              const res = await fetch(`${API_URL}/api/upload`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -242,8 +244,8 @@ export default function AdminDashboardPage() {
 
       // 2. Add or Edit Product record
       const url = editingProduct
-        ? `http://localhost:5000/api/products/${editingProduct.id}`
-        : 'http://localhost:5000/api/products';
+        ? `${API_URL}/api/products/${editingProduct.id}`
+        : `${API_URL}/api/products`;
       const method = editingProduct ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -298,7 +300,7 @@ export default function AdminDashboardPage() {
     const token = localStorage.getItem('adminToken') || '';
 
     try {
-      const response = await fetch(`http://localhost:5000/api/products/${id}`, {
+      const response = await fetch(`${API_URL}/api/products/${id}`, {
         method: 'DELETE',
         headers: { 'x-admin-token': token },
       });

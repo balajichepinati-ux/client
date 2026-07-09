@@ -1,5 +1,7 @@
 'use client';
 
+import { API_URL } from '@/utils/api';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Shield, Key, Mail, Cpu } from 'lucide-react';
@@ -26,7 +28,7 @@ export default function AdminLoginPage() {
     setErrorMessage('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
