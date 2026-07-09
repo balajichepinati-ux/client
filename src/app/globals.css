@@ -1,26 +1,168 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary-navy: #071A35;
+  --color-primary-royal: #1565FF;
+  --color-primary-electric: #2979FF;
+  --color-accent-cyan: #00E5FF;
+  --color-accent-green: #00C853;
+  --color-accent-orange: #FF9800;
+  --color-accent-violet: #8B5CF6;
+  
+  --color-brand-blue-600: #2563EB;
+  --color-brand-sky-500: #0EA5E9;
+  --color-brand-cyan-500: #06B6D4;
+  --color-brand-violet-500: #8B5CF6;
+
+  --color-bg-dark: #030815;
+  --color-bg-dark-card: rgba(7, 26, 53, 0.4);
+  --color-bg-light: #F8FAFC;
+  --color-bg-light-card: rgba(255, 255, 255, 0.7);
+
+  --animate-aurora: aurora 25s infinite alternate;
+  --animate-float: float 6s infinite ease-in-out;
+  --animate-pulse-slow: pulse-slow 10s infinite ease-in-out;
+  
+  --font-sans: var(--font-outfit), var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FFFFFF;
+  --foreground: #0F172A;
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  --background: #030815;
+  --foreground: #F8FAFC;
+  --card: rgba(7, 26, 53, 0.4);
+  --card-foreground: #F8FAFC;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes aurora {
+  0% {
+    filter: hue-rotate(0deg) blur(60px);
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    filter: hue-rotate(180deg) blur(80px);
+    transform: rotate(180deg) scale(1.2);
+  }
+  100% {
+    filter: hue-rotate(360deg) blur(60px);
+    transform: rotate(360deg) scale(1);
   }
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(1deg);
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.15);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(3, 8, 21, 0.95);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(37, 99, 235, 0.4);
+  border-radius: 5px;
+  border: 2px solid rgba(3, 8, 21, 0.95);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 229, 255, 0.7);
+}
+
+/* Glassmorphism Styles */
+.glass-panel {
+  background: rgba(7, 26, 53, 0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-light {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.glass-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-color: rgba(21, 101, 255, 0.3);
+  box-shadow: 0 20px 40px -15px rgba(21, 101, 255, 0.25);
+  transform: translateY(-5px);
+}
+
+.glass-card-light {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.05);
+}
+
+.glass-card-light:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.75) 100%);
+  border-color: rgba(37, 99, 235, 0.2);
+  box-shadow: 0 20px 40px -15px rgba(37, 99, 235, 0.15);
+  transform: translateY(-5px);
+}
+
+/* Glowing Elements */
+.glow-orb {
+  filter: blur(100px);
+  pointer-events: none;
+  border-radius: 50%;
+  mix-blend-mode: screen;
+}
+
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
