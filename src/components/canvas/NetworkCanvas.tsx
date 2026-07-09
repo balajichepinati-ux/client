@@ -73,7 +73,7 @@ export default function NetworkCanvas() {
     mainGroup.add(starField);
 
     // --- Network Nodes & Connections ---
-    const nodeCount = 50;
+    const nodeCount = 35;
     const nodes: {
       position: THREE.Vector3;
       velocity: THREE.Vector3;
@@ -108,7 +108,7 @@ export default function NetworkCanvas() {
       blending: THREE.AdditiveBlending,
     });
     const lineGeometry = new THREE.BufferGeometry();
-    const maxConnections = 200;
+    const maxConnections = 120;
     const linePositions = new Float32Array(maxConnections * 2 * 3); // 2 points per line, 3 coords per point
     lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
     const networkLines = new THREE.LineSegments(lineGeometry, lineMaterial);
@@ -120,18 +120,12 @@ export default function NetworkCanvas() {
     mainGroup.add(floatingGroup);
 
     // Materials
-    const glassMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0xffffff,
+    const glassMaterial = new THREE.MeshStandardMaterial({
+      color: 0x00e5ff,
       transparent: true,
-      opacity: 0.35,
+      opacity: 0.2,
       roughness: 0.15,
-      metalness: 0.1,
-      transmission: 0.9, // glass effect
-      ior: 1.5,
-      thickness: 1.5,
-      specularIntensity: 1.0,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.1,
+      metalness: 0.8,
     });
 
     const darkMetalMaterial = new THREE.MeshStandardMaterial({
@@ -352,12 +346,10 @@ export default function NetworkCanvas() {
       server.rotation.y = elapsedTime * 0.12;
       server.position.y = 1.2 + Math.cos(elapsedTime * 0.7) * 0.25;
 
-      // Randomly toggle server LEDs
+      // Randomly toggle server LEDs visibility
       serverBlinkingLEDs.forEach((led) => {
-        if (Math.random() > 0.99) {
-          (led.material as THREE.MeshBasicMaterial).color.setHex(
-            Math.random() > 0.4 ? 0x00c853 : 0xff9800
-          );
+        if (Math.random() > 0.98) {
+          led.visible = !led.visible;
         }
       });
 
@@ -368,16 +360,14 @@ export default function NetworkCanvas() {
       cctv.rotation.y = -Math.PI / 4 + Math.sin(elapsedTime * 0.4) * 0.3;
       cctv.position.y = -2.0 + Math.cos(elapsedTime * 0.6) * 0.15;
       if (Math.random() > 0.98) {
-        cctvLEDMaterial.color.setHex(Math.random() > 0.2 ? 0xef4444 : 0x000000);
+        cameraLED.visible = !cameraLED.visible;
       }
 
       router.rotation.y = -elapsedTime * 0.1;
       router.position.y = Math.sin(elapsedTime * 0.8) * 0.15;
       routerLEDs.forEach((led) => {
         if (Math.random() > 0.95) {
-          (led.material as THREE.MeshBasicMaterial).color.setHex(
-            Math.random() > 0.5 ? 0x00e5ff : 0x071a35
-          );
+          led.visible = !led.visible;
         }
       });
 
