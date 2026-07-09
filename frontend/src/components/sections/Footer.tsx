@@ -11,7 +11,7 @@ export default function Footer() {
     e.preventDefault();
     if (!email) return;
     try {
-      const response = await fetch('/api/newsletter', {
+      const response = await fetch('http://localhost:5000/api/newsletter', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
