@@ -17,6 +17,15 @@ model Admin {
   createdAt DateTime @default(now())
 }
 
+// Registered Users / Clients
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+}
+
 // Product Inventory
 model Product {
   id          String   @id @default(uuid())
@@ -57,6 +66,17 @@ model Contact {
   email     String
   phone     String
   service   String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+// Custom Client Enquiries (product details or custom project quotations)
+model Enquiry {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String
+  subject   String
   message   String
   createdAt DateTime @default(now())
 }
