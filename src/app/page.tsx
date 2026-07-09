@@ -2,7 +2,6 @@ import Navbar from '@/components/sections/Navbar';
 import Hero from '@/components/sections/Hero';
 import Products from '@/components/sections/Products';
 import Services from '@/components/sections/Services';
-import Stats from '@/components/sections/Stats';
 import WhyChooseUs from '@/components/sections/WhyChooseUs';
 import Industries from '@/components/sections/Industries';
 import Process from '@/components/sections/Process';
@@ -26,9 +25,6 @@ export default function Home() {
 
         {/* Services Showcase */}
         <Services />
-
-        {/* Dynamic ticking statistics */}
-        <Stats />
 
         {/* Why Choose Us details */}
         <WhyChooseUs />
