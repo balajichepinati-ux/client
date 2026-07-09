@@ -9,7 +9,48 @@ datasource db {
   provider = "postgresql"
 }
 
-// Model for Contact Form submissions
+// Admin Accounts
+model Admin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+}
+
+// Product Inventory
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  category    String   // laptop, desktop, server, storage, cctv, network, UPS, accessories, software
+  description String
+  price       Float?
+  image       String?
+  specs       String[]
+  createdAt   DateTime @default(now())
+}
+
+// IT Services
+model Service {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  icon        String   // Lucide icon key name
+  features    String[]
+  createdAt   DateTime @default(now())
+}
+
+// Customer Reviews
+model Review {
+  id          String   @id @default(uuid())
+  name        String
+  email       String
+  rating      Int      // 1 to 5 stars
+  comment     String
+  isApproved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+// Contact Form Submissions
 model Contact {
   id        String   @id @default(uuid())
   name      String
@@ -20,7 +61,32 @@ model Contact {
   createdAt DateTime @default(now())
 }
 
-// Model for Newsletter Subscriptions
+// Career Openings
+model Career {
+  id           String        @id @default(uuid())
+  title        String
+  department   String
+  location     String
+  description  String
+  requirements String[]
+  applications Application[]
+  createdAt    DateTime      @default(now())
+}
+
+// Job Applications
+model Application {
+  id          String   @id @default(uuid())
+  careerId    String
+  career      Career   @relation(fields: [careerId], references: [id], onDelete: Cascade)
+  name        String
+  email       String
+  phone       String
+  resumeUrl   String
+  coverLetter String?
+  createdAt   DateTime @default(now())
+}
+
+// Newsletter Subscriptions
 model Subscriber {
   id           String   @id @default(uuid())
   email        String   @unique

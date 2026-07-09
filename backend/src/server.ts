@@ -1,8 +1,7 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import * as z from 'zod';
 import dotenv from 'dotenv';
-import { prisma } from './prisma';
+import apiRouter from './routes';
 
 dotenv.config();
 
@@ -19,165 +18,28 @@ app.use(
   })
 );
 
-app.use(express.json());
+// Body parser configured to accept large base64 file payloads (e.g. resumes, images)
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-// Secret token for admin validation
-const ADMIN_SECRET_TOKEN = 'zeroerror_secure_admin_auth_token_2026';
+// Mount central router
+app.use('/api', apiRouter);
 
-// Zod schemas
-const contactSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-  phone: z.string().min(10, { message: 'Phone number must be at least 10 digits.' }),
-  service: z.string().min(1, { message: 'Please select a service.' }),
-  message: z.string().min(10, { message: 'Message must be at least 10 characters.' }),
+// Root route check
+app.get('/', (req: Request, res: Response) => {
+  res.send('🚀 ZERO ERROR IT SOLUTIONS Enterprise API is active.');
 });
 
-const newsletterSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
+// Global Fallback Error Handler
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error('Unhandled Application Exception:', err);
+  return res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'An unexpected server error occurred.',
+  });
 });
 
-// POST: Contact Form Submission
-app.post('/api/contact', async (req, res) => {
-  try {
-    // 1. Zod Validation
-    const parsedData = contactSchema.parse(req.body);
-
-    // 2. Persist to Supabase Database via Prisma
-    const newSubmission = await prisma.contact.create({
-      data: {
-        name: parsedData.name,
-        email: parsedData.email,
-        phone: parsedData.phone,
-        service: parsedData.service,
-        message: parsedData.message,
-      },
-    });
-
-    // 3. Logger alert
-    console.log('\n==================================================');
-    console.log('📬 SUPABASE DATABASE: NEW INQUIRY SAVED VIA PRISMA');
-    console.log(`ID: ${newSubmission.id}`);
-    console.log(`Name: ${newSubmission.name}`);
-    console.log(`Email: ${newSubmission.email} | Phone: ${newSubmission.phone}`);
-    console.log(`Solution Requested: ${newSubmission.service}`);
-    console.log('==================================================\n');
-
-    return res.status(200).json({
-      success: true,
-      message: 'Inquiry saved successfully to database.',
-      submissionId: newSubmission.id,
-    });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        success: false,
-        errors: error.flatten().fieldErrors,
-      });
-    }
-    console.error('Express contact database error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Internal server error occurred while writing to database.',
-    });
-  }
-});
-
-// POST: Newsletter Subscription
-app.post('/api/newsletter', async (req, res) => {
-  try {
-    // 1. Validation
-    const { email } = newsletterSchema.parse(req.body);
-
-    const normalizedEmail = email.toLowerCase();
-
-    // 2. Check duplication in Supabase
-    const existingSub = await prisma.subscriber.findUnique({
-      where: { email: normalizedEmail },
-    });
-
-    if (existingSub) {
-      return res.status(200).json({
-        success: true,
-        message: 'Already subscribed!',
-      });
-    }
-
-    // 3. Save new subscriber via Prisma
-    const newSub = await prisma.subscriber.create({
-      data: {
-        email: normalizedEmail,
-      },
-    });
-
-    console.log(`📬 SUPABASE DATABASE: NEW SUBSCRIBER SAVED: ${newSub.email}`);
-
-    return res.status(200).json({
-      success: true,
-      message: 'Subscription completed successfully.',
-    });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        success: false,
-        errors: error.flatten().fieldErrors,
-      });
-    }
-    console.error('Express newsletter database error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Internal server error occurred.',
-    });
-  }
-});
-
-// GET: Admin Submissions Retrieve
-app.get('/api/admin/submissions', async (req, res) => {
-  try {
-    const token = req.headers['x-admin-token'];
-
-    if (token !== ADMIN_SECRET_TOKEN) {
-      return res.status(401).json({
-        success: false,
-        message: 'Unauthorized. Invalid or missing token.',
-      });
-    }
-
-    // Fetch records from Supabase
-    const contacts = await prisma.contact.findMany({
-      orderBy: { createdAt: 'desc' },
-    });
-
-    const subscribers = await prisma.subscriber.findMany({
-      orderBy: { subscribedAt: 'desc' },
-    });
-
-    return res.status(200).json({
-      success: true,
-      summary: {
-        totalInquiries: contacts.length,
-        totalSubscribers: subscribers.length,
-      },
-      data: {
-        inquiries: contacts,
-        subscribers: subscribers,
-      },
-    });
-  } catch (error) {
-    console.error('Express admin fetch database error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Internal server error occurred.',
-    });
-  }
-});
-
-// Root Route
-app.get('/', (req, res) => {
-  res.send('ZERO ERROR IT SOLUTIONS database API Server is running.');
-});
-
-// Start Server
+// Start listening
 app.listen(PORT, () => {
-  console.log(`🚀 Express database Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Express Server running on http://localhost:${PORT}`);
 });

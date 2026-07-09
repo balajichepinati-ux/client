@@ -4,21 +4,24 @@ import { useState, useEffect } from 'react';
 import { useTheme } from '@/components/providers/ThemeProvider';
 import { Menu, X, Sun, Moon, Cpu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const menuItems = [
-  { name: 'Home', href: '#home' },
-  { name: 'Products', href: '#products' },
-  { name: 'Services', href: '#services' },
-  { name: 'Industries', href: '#industries' },
-  { name: 'Process', href: '#process' },
-  { name: 'About', href: '#about' },
-  { name: 'Contact', href: '#contact' },
+  { name: 'Home', href: '/' },
+  { name: 'Products', href: '/products' },
+  { name: 'Services', href: '/services' },
+  { name: 'About', href: '/about' },
+  { name: 'Careers', href: '/careers' },
+  { name: 'Reviews', href: '/reviews' },
+  { name: 'Contact', href: '/#contact' },
 ];
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,11 +36,16 @@ export default function Navbar() {
   }, []);
 
   const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
     setIsOpen(false);
-    const targetElement = document.querySelector(href);
-    if (targetElement) {
-      targetElement.scrollIntoView({ behavior: 'smooth' });
+    if (href.includes('#')) {
+      const hash = href.substring(href.indexOf('#'));
+      if (pathname === '/') {
+        e.preventDefault();
+        const targetElement = document.querySelector(hash);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
     }
   };
 
@@ -51,9 +59,9 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
-        <a
-          href="#home"
-          onClick={(e) => handleScrollTo(e, '#home')}
+        <Link
+          href="/"
+          onClick={(e) => handleScrollTo(e, '/#home')}
           className="flex items-center gap-2 group"
         >
           <div className="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-primary-royal to-accent-cyan flex items-center justify-center overflow-hidden shadow-[0_0_15px_rgba(21,101,255,0.4)]">
@@ -68,21 +76,27 @@ export default function Navbar() {
               IT SOLUTIONS
             </span>
           </div>
-        </a>
+        </Link>
 
         {/* Desktop Navigation Links */}
         <nav className="hidden lg:flex items-center gap-8">
           <ul className="flex items-center gap-7">
             {menuItems.map((item) => (
               <li key={item.name}>
-                <a
+                <Link
                   href={item.href}
                   onClick={(e) => handleScrollTo(e, item.href)}
-                  className="relative py-2 text-sm font-semibold tracking-wide font-inter text-slate-700 dark:text-slate-300 hover:text-primary-royal dark:hover:text-white transition-colors group"
+                  className={`relative py-2 text-sm font-semibold tracking-wide font-inter transition-colors group ${
+                    pathname === item.href
+                      ? 'text-primary-royal dark:text-accent-cyan font-bold'
+                      : 'text-slate-700 dark:text-slate-300 hover:text-primary-royal dark:hover:text-white'
+                  }`}
                 >
                   {item.name}
-                  <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-primary-royal to-accent-cyan group-hover:w-full transition-all duration-300 rounded-full" />
-                </a>
+                  <span className={`absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-primary-royal to-accent-cyan transition-all duration-300 rounded-full ${
+                    pathname === item.href ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`} />
+                </Link>
               </li>
             ))}
           </ul>
@@ -100,15 +114,15 @@ export default function Navbar() {
           </button>
 
           {/* Request Quote Button */}
-          <a
-            href="#contact"
-            onClick={(e) => handleScrollTo(e, '#contact')}
+          <Link
+            href="/#contact"
+            onClick={(e) => handleScrollTo(e, '/#contact')}
             className="relative inline-flex items-center justify-center px-6 py-2.5 rounded-xl text-sm font-bold text-white overflow-hidden group shadow-[0_4px_15px_rgba(21,101,255,0.3)]"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-primary-royal to-primary-electric transition-transform duration-300 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-r from-accent-cyan to-primary-royal opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <span className="relative z-10">Request Quote</span>
-          </a>
+          </Link>
         </div>
 
         {/* Mobile menu toggle */}
@@ -143,23 +157,27 @@ export default function Navbar() {
             <ul className="flex flex-col gap-1 px-6 py-4">
               {menuItems.map((item) => (
                 <li key={item.name}>
-                  <a
+                  <Link
                     href={item.href}
                     onClick={(e) => handleScrollTo(e, item.href)}
-                    className="block py-3 text-base font-semibold text-slate-700 dark:text-slate-300 hover:text-primary-royal dark:hover:text-white border-b border-slate-50 dark:border-white/[0.02] transition-colors"
+                    className={`block py-3 text-base font-semibold border-b border-slate-50 dark:border-white/[0.02] transition-colors ${
+                      pathname === item.href
+                        ? 'text-primary-royal dark:text-accent-cyan font-bold'
+                        : 'text-slate-700 dark:text-slate-300 hover:text-primary-royal dark:hover:text-white'
+                    }`}
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
               <li className="pt-4 flex flex-col gap-3">
-                <a
-                  href="#contact"
-                  onClick={(e) => handleScrollTo(e, '#contact')}
+                <Link
+                  href="/#contact"
+                  onClick={(e) => handleScrollTo(e, '/#contact')}
                   className="w-full py-3 rounded-xl bg-gradient-to-r from-primary-royal to-primary-electric text-center text-sm font-bold text-white shadow-md shadow-primary-royal/20"
                 >
                   Request Quote
-                </a>
+                </Link>
               </li>
             </ul>
           </motion.div>
